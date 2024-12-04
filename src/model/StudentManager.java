@@ -15,4 +15,14 @@ public class StudentManager {
     public void removeStudent(String studentId) {
         students.removeIf(student -> student.getId().equals(studentId));
     }
+
+    // lay thong tin sinh vien
+    public Student getStudent(String studentId) {
+        return students.stream().filter(student -> student.getId().equals(studentId)).findFirst().orElse(null);
+    }
+
+    // liet ke tat ca cac sinh vien
+    public List<Student> getAllStudent() {
+        return students;
+    }
 }
