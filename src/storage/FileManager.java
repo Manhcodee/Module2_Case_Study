@@ -12,7 +12,7 @@ import java.util.List;
 public class FileManager {
     public static void writeToExcel(List<Student> students, String fileName) throws IOException {
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Student");
+        Sheet sheet = workbook.createSheet("Students");
 
         Row headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellValue("ID");
