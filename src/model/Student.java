@@ -1,14 +1,13 @@
 package model;
 
-import java.io.Serializable;
-
 public class Student {
     private String id;
     private String code;
     private String name;
     private String email;
-    private double gpa;  // Điểm trung bình
+    private double gpa;
 
+    // Constructor, getters, setters
     public Student(String id, String code, String name, String email, double gpa) {
         this.id = id;
         this.code = code;
@@ -37,7 +36,6 @@ public class Student {
         return gpa;
     }
 
-    // Cập nhật phương thức toCSV để bao gồm email và điểm trung bình
     public String toCSV() {
         return id + "," + code + "," + name + "," + email + "," + gpa;
     }

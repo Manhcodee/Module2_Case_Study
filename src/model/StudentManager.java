@@ -7,9 +7,7 @@ public class StudentManager {
     private List<Student> students = new ArrayList<>();
     private static StudentManager instance;
 
-    private StudentManager() {
-        // Private constructor để ngăn tạo đối tượng từ bên ngoài
-    }
+    private StudentManager() {}
 
     public static StudentManager getInstance() {
         if (instance == null) {
@@ -28,14 +26,17 @@ public class StudentManager {
                 return student;
             }
         }
-        return null; // Không tìm thấy sinh viên
+        return null;
     }
 
-    public void updateStudent(String id, String name, String email, double gpa) {
+    // Sửa thông tin sinh viên theo ID
+    public boolean updateStudent(String id, String name, String email, double gpa) {
         Student student = getStudentById(id);
         if (student != null) {
             student = new Student(id, student.getCode(), name, email, gpa);
+            return true;
         }
+        return false;
     }
 
     public void deleteStudent(String id) {

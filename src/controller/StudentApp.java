@@ -4,9 +4,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class StudentApp {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentController controller = new StudentController();
+
+        try {
+            controller.loadStudentsFromCSV();  // Đọc dữ liệu từ CSV khi ứng dụng khởi động
+        } catch (IOException e) {
+            System.out.println("Lỗi khi đọc dữ liệu từ file.");
+        }
 
         while (true) {
             System.out.println("\nChọn chức năng:");
@@ -58,22 +65,20 @@ public class StudentApp {
                     break;
 
                 case 5: // Lưu dữ liệu vào file CSV
-                    System.out.print("Nhập đường dẫn file CSV: ");
-                    String filePath = scanner.nextLine();
                     try {
-                        controller.saveStudentsToCSV(filePath);
-                        System.out.println("Dữ liệu đã được lưu vào file CSV.");
+                        controller.saveStudentsToCSV();
                     } catch (IOException e) {
-                        System.out.println("Có lỗi khi lưu dữ liệu: " + e.getMessage());
+                        System.out.println("Lỗi khi lưu dữ liệu.");
                     }
                     break;
 
                 case 6: // Thoát
-                    System.out.println("Tạm biệt!");
+                    System.out.println("Cảm ơn bạn đã sử dụng chương trình!");
                     return;
 
                 default:
-                    System.out.println("Lựa chọn không hợp lệ.");
+                    System.out.println("Chọn không hợp lệ. Vui lòng thử lại.");
+                    break;
             }
         }
     }
