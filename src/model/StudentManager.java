@@ -22,7 +22,7 @@ public class StudentManager {
     }
 
     // liet ke tat ca cac sinh vien
-    public List<Student> getAllStudent() {
+    public List<Student> getAllStudents() {
         return students;
     }
 }
