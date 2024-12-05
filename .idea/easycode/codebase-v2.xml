@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/src/model/CustomException.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/model/Student.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/model/StudentManager.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/model/StudentValidator.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/storage/FileManager.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/storage/StudentDAO.java;D:/Code Gym/module 2/CaseStudy/CaseStudy/src/Main.java" />
+  </component>
+</project>
