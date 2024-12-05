@@ -10,21 +10,17 @@ import java.util.List;
 //luu tru va truy xuat tu file nhi phan
 
 public class StudentDAO {
-    private static final String FILE_PATH = "students.dat";
+    // Lưu danh sách sinh viên vào file CSV
+    // Lưu danh sách sinh viên vào file CSV
+    public static void saveStudentsToCSV(List<Student> students, String filePath) throws IOException {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Ghi tiêu đề
+            writer.write("id,code,name,email,gpa\n");
 
-    //luu danh sanh sinh vien vao file nhi phan
-    public static void saveStudents(List<Student> students) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
-            out.writeObject(students);
-        }
-    }
-
-    // doc danh sach sinh vien tu file nhi phan
-    public static List<Student> loadStudents() throws IOException, ClassNotFoundException {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) return new ArrayList<>();
-        try (ObjectInputStream in  = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
-                return (List<Student>) in.readObject();
+            // Ghi dữ liệu sinh viên
+            for (Student student : students) {
+                writer.write(student.toCSV() + "\n");
+            }
         }
     }
 }

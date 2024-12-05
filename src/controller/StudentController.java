@@ -1,60 +1,31 @@
 package controller;
 
-import model.CustomException;
-import model.Student;
-import model.StudentManager;
-import model.StudentValidator;
-import storage.FileManager;
+import model.*;
 import storage.StudentDAO;
 
-import java.util.List;
+import java.io.IOException;
 
 public class StudentController {
-    private StudentManager manager ;
+
+    private StudentManager studentManager;
 
     public StudentController() {
-        manager = new StudentManager();
+        studentManager = StudentManager.getInstance();  // Singleton
     }
 
-    // them sinh vien moi
-    public void addStudent(Student student) throws CustomException {
-        if (!StudentValidator.validateEmail(student.getEmail())) {
-            throw new CustomException("Email không hợp lệ!");
-        }
-        if (!StudentValidator.validateGpa(student.getGpa())) {
-            throw new CustomException("Điểm GPA không hợp lệ!");
-        }
-        if (!StudentValidator.validateId(student.getId())) {
-            throw new CustomException("ID sinh viên không hợp lệ!");
-        }
-        manager.addStudent(student);
-    }
-
-    // luu sinh vien vao file
-    public void saveStudentsToFile() {
-        try {
-            StudentDAO.saveStudents(manager.getAllStudents());
-        } catch (Exception e) {
-            e.printStackTrace();
+    // Thêm sinh viên vào hệ thống
+    public void addStudent(String id, String code, String name, String email, double gpa) {
+        // Kiểm tra email và điểm trung bình hợp lệ
+        if (StudentValidator.validateEmail(email) && StudentValidator.validateGPA(gpa)) {
+            Student student = StudentFactory.createStudent(id, code, name, email, gpa); // Factory
+            studentManager.addStudent(student);
+        } else {
+            System.out.println("Thông tin sinh viên không hợp lệ.");
         }
     }
 
-    //doc danh sach sinh vien tu file
-    public List<Student> loadStudentsFromFile() {
-        try {
-            return StudentDAO.loadStudents();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // ghi danh sach sinh vien vao file
-    public void saveStudentsToExcel(String fileName) {
-        try {
-            FileManager.writeToExcel(manager.getAllStudents(), fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // Lưu danh sách sinh viên vào file CSV
+    public void saveStudentsToCSV(String filePath) throws IOException {
+        StudentDAO.saveStudentsToCSV(studentManager.getAllStudents(), filePath); // DAO
     }
 }

@@ -2,14 +2,16 @@ package model;
 
 import java.io.Serializable;
 
-public class Student implements Serializable {
+public class Student {
     private String id;
+    private String code;
     private String name;
     private String email;
-    private double gpa;
+    private double gpa;  // Điểm trung bình
 
-    public Student(String id, String name, String email, double gpa) {
+    public Student(String id, String code, String name, String email, double gpa) {
         this.id = id;
+        this.code = code;
         this.name = name;
         this.email = email;
         this.gpa = gpa;
@@ -19,31 +21,24 @@ public class Student implements Serializable {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getCode() {
+        return code;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public double getGpa() {
         return gpa;
     }
 
-    public void setGpa(double gpa) {
-        this.gpa = gpa;
+    // Cập nhật phương thức toCSV để bao gồm email và điểm trung bình
+    public String toCSV() {
+        return id + "," + code + "," + name + "," + email + "," + gpa;
     }
 }
