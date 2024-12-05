@@ -11,9 +11,13 @@ import java.util.List;
 
 public class StudentDAO {
     // Lưu danh sách sinh viên vào file CSV
-    // Lưu danh sách sinh viên vào file CSV
     public static void saveStudentsToCSV(List<Student> students, String filePath) throws IOException {
-        try (FileWriter writer = new FileWriter(filePath)) {
+        File file = new File(filePath);
+
+        // Kiểm tra và tạo thư mục nếu chưa có
+        file.getParentFile().mkdirs();  // Tạo thư mục chứa file nếu chưa tồn tại
+
+        try (FileWriter writer = new FileWriter(file)) {
             // Ghi tiêu đề
             writer.write("id,code,name,email,gpa\n");
 
@@ -24,3 +28,4 @@ public class StudentDAO {
         }
     }
 }
+
