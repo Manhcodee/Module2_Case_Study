@@ -1,17 +1,18 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import dao.StudentDAO;
+import java.util.*;
 
 public class StudentManager {
     private static StudentManager instance;
+    private StudentDAO studentDAO;
     private List<Student> students;
 
     private StudentManager() {
-        students = new ArrayList<>();
+        studentDAO = new StudentDAO();
+        students = studentDAO.getAllStudents();
     }
 
-    // Lấy instance của StudentManager (Singleton)
     public static StudentManager getInstance() {
         if (instance == null) {
             instance = new StudentManager();
@@ -21,27 +22,7 @@ public class StudentManager {
 
     public void addStudent(Student student) {
         students.add(student);
-    }
-
-    public boolean updateStudent(String id, String name, String email, double gpa) {
-        for (Student student : students) {
-            if (student.getId().equals(id)) {
-                student.setName(name);
-                student.setEmail(email);
-                student.setGpa(gpa);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void deleteStudent(String id) {
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getId().equals(id)) {
-                students.remove(i);
-                break;
-            }
-        }
+        studentDAO.saveStudent(student);
     }
 
     public List<Student> getAllStudents() {
@@ -55,5 +36,13 @@ public class StudentManager {
             }
         }
         return null;
+    }
+
+    public void deleteStudent(String id) {
+        Student student = getStudentById(id);
+        if (student != null) {
+            students.remove(student);
+            studentDAO.deleteStudent(id);
+        }
     }
 }

@@ -1,84 +1,63 @@
 package controller;
 
 import model.Student;
+import model.Grade;
 import model.StudentManager;
-import model.StudentValidator;
-import storage.StudentDAO;
-
-import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.regex.*;
 
 public class StudentController {
-
     private StudentManager studentManager;
 
     public StudentController() {
         studentManager = StudentManager.getInstance();
     }
 
-    // Thêm sinh viên
-    public void addStudent(String id, String code, String name, String email, double gpa) {
-        // Kiểm tra ID có trùng không
-        if (studentManager.getStudentById(id) != null) {
-            System.out.println("ID đã tồn tại. Vui lòng chọn một ID khác.");
-            return;
+    public void addStudent(String id, String code, String name, String email) {
+        if (!isValidEmail(email)) {
+            throw new IllegalArgumentException("Email không hợp lệ.");
         }
-
-        // Kiểm tra email
-        if (!StudentValidator.validateEmail(email)) {
-            System.out.println("Email không hợp lệ. Vui lòng nhập lại.");
-            return;
-        }
-
-        Student student = new Student(id, code, name, email, gpa);
+        Student student = new Student(id, code, name, email);
         studentManager.addStudent(student);
         System.out.println("Sinh viên đã được thêm thành công!");
     }
 
-    // Sửa theo ID
-    public void updateStudent(String id, String name, String email, double gpa) {
-        boolean isUpdated = studentManager.updateStudent(id, name, email, gpa);
-        if (isUpdated) {
-            System.out.println("Thông tin sinh viên đã được sửa thành công!");
-        } else {
-            System.out.println("Không tìm thấy sinh viên với ID: " + id);
-        }
-    }
-
-    // Xóa theo ID
-    public void deleteStudent(String id) {
+    public void updateStudentInfo(String id, String newCode, String newName, String newEmail) {
         Student student = studentManager.getStudentById(id);
         if (student != null) {
-            studentManager.deleteStudent(id);
-            System.out.println("Sinh viên đã được xóa thành công!");
+            student.setCode(newCode);
+            student.setName(newName);
+            student.setEmail(newEmail);
+            System.out.println("Thông tin sinh viên đã được cập nhật.");
         } else {
             System.out.println("Không tìm thấy sinh viên với ID: " + id);
         }
     }
 
-    // Lưu danh sách sinh viên vào file CSV
-    public void saveStudentsToCSV() throws IOException {
-        StudentDAO.saveStudentsToCSV(studentManager.getAllStudents());
-        System.out.println("Dữ liệu đã được lưu vào file CSV.");
-    }
-
-    // Đọc sinh viên từ file CSV
-    public void loadStudentsFromCSV() throws IOException {
-        List<Student> students = StudentDAO.readStudentsFromCSV();
-        for (Student student : students) {
-            studentManager.addStudent(student);
-        }
-    }
-
-    // Hiển thị tất cả sinh viên
-    public void displayStudents() {
-        List<Student> students = studentManager.getAllStudents();
-        if (students.isEmpty()) {
-            System.out.println("Danh sách sinh viên trống.");
+    public void updateScore(String id, String subject, double score) {
+        Student student = studentManager.getStudentById(id);
+        if (student != null) {
+            Grade grade = new Grade(subject, score);
+            student.addGrade(grade);
+            System.out.println("Điểm môn " + subject + " đã được cập nhật.");
         } else {
-            for (Student student : students) {
-                System.out.println(student.getId() + " | " + student.getCode() + " | " + student.getName() + " | " + student.getEmail() + " | " + student.getGpa());
-            }
+            System.out.println("Không tìm thấy sinh viên với ID: " + id);
         }
+    }
+
+    public void displayStudent(String id) {
+        Student student = studentManager.getStudentById(id);
+        if (student != null) {
+            student.displayStudentInfo();
+        } else {
+            System.out.println("Không tìm thấy sinh viên với ID: " + id);
+        }
+    }
+
+    private boolean isValidEmail(String email) {
+        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }

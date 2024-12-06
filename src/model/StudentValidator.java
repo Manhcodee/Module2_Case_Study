@@ -3,7 +3,6 @@ package model;
 import java.util.regex.Pattern;
 
 public class StudentValidator {
-
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
@@ -17,8 +16,8 @@ public class StudentValidator {
         return id != null && !id.isEmpty() && id.matches("[A-Za-z0-9]+");
     }
 
-    // Kiểm tra hợp lệ GPA
-    public static boolean validateGPA(double gpa) {
-        return gpa >= 0.0 && gpa <= 10.0;
+    // Kiểm tra hợp lệ điểm số
+    public static boolean validateScore(double score) {
+        return score >= 0 && score <= 10;
     }
 }
