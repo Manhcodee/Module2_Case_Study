@@ -2,11 +2,11 @@ package controller;
 
 import model.Student;
 import model.StudentManager;
+import model.StudentValidator;
 import storage.StudentDAO;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class StudentController {
 
@@ -18,6 +18,18 @@ public class StudentController {
 
     // Thêm sinh viên vào hệ thống
     public void addStudent(String id, String code, String name, String email, double gpa) {
+        // Kiểm tra xem ID có trùng lặp không
+        if (studentManager.getStudentById(id) != null) {
+            System.out.println("ID đã tồn tại. Vui lòng chọn một ID khác.");
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của email
+        if (!StudentValidator.validateEmail(email)) {
+            System.out.println("Email không hợp lệ. Vui lòng nhập lại.");
+            return;
+        }
+
         Student student = new Student(id, code, name, email, gpa);
         studentManager.addStudent(student);
         System.out.println("Sinh viên đã được thêm thành công!");

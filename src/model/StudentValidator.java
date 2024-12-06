@@ -12,12 +12,12 @@ public class StudentValidator {
         return EMAIL_PATTERN.matcher(email).matches();
     }
 
-    // Kiểm tra tính hợp lệ của id
+    // Kiểm tra tính hợp lệ của ID
     public static boolean validateId(String id) {
         return id != null && !id.isEmpty() && id.matches("[A-Za-z0-9]+");
     }
 
-    // Kiểm tra tính hợp lệ của điểm trung bình GPA
+    // Kiểm tra tính hợp lệ của GPA
     public static boolean validateGPA(double gpa) {
         return gpa >= 0.0 && gpa <= 10.0;
     }

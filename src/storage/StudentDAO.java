@@ -7,10 +7,12 @@ import java.util.List;
 
 public class StudentDAO {
 
+    private static final String FILE_PATH = "data/students.csv";
+
     // Đọc sinh viên từ file CSV
     public static List<Student> readStudentsFromCSV() throws IOException {
         List<Student> students = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader("data/students.csv"));
+        BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
         String line;
 
         // Đọc từng dòng trong file CSV
@@ -28,17 +30,15 @@ public class StudentDAO {
             String email = data[3];
             double gpa = 0.0;
 
-            // Kiểm tra và chuyển đổi GPA từ chuỗi thành double, nếu có lỗi sẽ bỏ qua dòng này
+            // Kiểm tra và chuyển đổi GPA từ chuỗi thành double
             try {
                 gpa = Double.parseDouble(data[4]);
             } catch (NumberFormatException e) {
-                System.out.println("Lỗi định dạng GPA cho sinh viên với ID: " + id + ". GPA không hợp lệ.");
-                continue; // Bỏ qua sinh viên này nếu GPA không hợp lệ
+                continue; // Bỏ qua sinh viên nếu GPA không hợp lệ
             }
 
             // Tạo đối tượng Student và thêm vào danh sách
-            Student student = new Student(id, code, name, email, gpa);
-            students.add(student);
+            students.add(new Student(id, code, name, email, gpa));
         }
 
         reader.close();
@@ -47,11 +47,9 @@ public class StudentDAO {
 
     // Lưu sinh viên vào file CSV
     public static void saveStudentsToCSV(List<Student> students) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("data/students.csv"));
-        // Ghi tiêu đề
+        BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH));
         writer.write("ID,Code,Name,Email,GPA\n");
 
-        // Ghi thông tin từng sinh viên
         for (Student student : students) {
             writer.write(student.getId() + "," + student.getCode() + "," + student.getName() + "," + student.getEmail() + "," + student.getGpa() + "\n");
         }

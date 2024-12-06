@@ -7,12 +7,31 @@ public class Student {
     private String email;
     private double gpa;
 
-    // Constructor, getters, setters
     public Student(String id, String code, String name, String email, double gpa) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.email = email;
+        this.gpa = gpa;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setGpa(double gpa) {
         this.gpa = gpa;
     }
 
@@ -39,4 +58,5 @@ public class Student {
     public String toCSV() {
         return id + "," + code + "," + name + "," + email + "," + gpa;
     }
+
 }

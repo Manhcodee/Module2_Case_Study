@@ -1,5 +1,7 @@
 package controller;
 
+import model.StudentValidator;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -25,7 +27,7 @@ public class StudentApp {
             System.out.println("6. Thoát");
 
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Clear buffer
+            scanner.nextLine();
 
             switch (choice) {
                 case 1: // Thêm sinh viên
@@ -35,8 +37,17 @@ public class StudentApp {
                     String code = scanner.nextLine();
                     System.out.print("Nhập tên sinh viên: ");
                     String name = scanner.nextLine();
-                    System.out.print("Nhập email: ");
-                    String email = scanner.nextLine();
+                    String email;
+                    while (true) {
+                        System.out.print("Nhập email: ");
+                        email = scanner.nextLine();
+                        // Kiểm tra email hợp lệ
+                        if (StudentValidator.validateEmail(email)) {
+                            break;
+                        } else {
+                            System.out.println("Email không hợp lệ. Vui lòng nhập lại.");
+                        }
+                    }
                     System.out.print("Nhập điểm trung bình GPA: ");
                     double gpa = scanner.nextDouble();
                     controller.addStudent(id, code, name, email, gpa);
@@ -67,6 +78,7 @@ public class StudentApp {
                 case 5: // Lưu dữ liệu vào file CSV
                     try {
                         controller.saveStudentsToCSV();
+                        System.out.println("Dữ liệu đã được lưu vào file CSV.");
                     } catch (IOException e) {
                         System.out.println("Lỗi khi lưu dữ liệu.");
                     }

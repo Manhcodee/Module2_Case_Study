@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentManager {
-    private List<Student> students = new ArrayList<>();
     private static StudentManager instance;
+    private List<Student> students;
 
-    private StudentManager() {}
+    private StudentManager() {
+        students = new ArrayList<>();
+    }
 
+    // Lấy instance của StudentManager (Singleton)
     public static StudentManager getInstance() {
         if (instance == null) {
             instance = new StudentManager();
@@ -20,21 +23,14 @@ public class StudentManager {
         students.add(student);
     }
 
-    public Student getStudentById(String id) {
+    public boolean updateStudent(String id, String name, String email, double gpa) {
         for (Student student : students) {
             if (student.getId().equals(id)) {
-                return student;
+                student.setName(name);
+                student.setEmail(email);
+                student.setGpa(gpa);
+                return true;
             }
-        }
-        return null;
-    }
-
-    // Sửa thông tin sinh viên theo ID
-    public boolean updateStudent(String id, String name, String email, double gpa) {
-        Student student = getStudentById(id);
-        if (student != null) {
-            student = new Student(id, student.getCode(), name, email, gpa);
-            return true;
         }
         return false;
     }
@@ -45,5 +41,14 @@ public class StudentManager {
 
     public List<Student> getAllStudents() {
         return students;
+    }
+
+    public Student getStudentById(String id) {
+        for (Student student : students) {
+            if (student.getId().equals(id)) {
+                return student;
+            }
+        }
+        return null;
     }
 }
