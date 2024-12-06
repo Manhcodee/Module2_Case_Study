@@ -36,7 +36,12 @@ public class StudentManager {
     }
 
     public void deleteStudent(String id) {
-        students.removeIf(student -> student.getId().equals(id));
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getId().equals(id)) {
+                students.remove(i);
+                break;
+            }
+        }
     }
 
     public List<Student> getAllStudents() {
