@@ -16,15 +16,15 @@ public class StudentController {
         studentManager = StudentManager.getInstance();
     }
 
-    // Thêm sinh viên vào hệ thống
+    // Thêm sinh viên
     public void addStudent(String id, String code, String name, String email, double gpa) {
-        // Kiểm tra xem ID có trùng lặp không
+        // Kiểm tra ID có trùng không
         if (studentManager.getStudentById(id) != null) {
             System.out.println("ID đã tồn tại. Vui lòng chọn một ID khác.");
             return;
         }
 
-        // Kiểm tra tính hợp lệ của email
+        // Kiểm tra email
         if (!StudentValidator.validateEmail(email)) {
             System.out.println("Email không hợp lệ. Vui lòng nhập lại.");
             return;
@@ -35,7 +35,7 @@ public class StudentController {
         System.out.println("Sinh viên đã được thêm thành công!");
     }
 
-    // Sửa sinh viên theo ID
+    // Sửa theo ID
     public void updateStudent(String id, String name, String email, double gpa) {
         boolean isUpdated = studentManager.updateStudent(id, name, email, gpa);
         if (isUpdated) {
@@ -45,7 +45,7 @@ public class StudentController {
         }
     }
 
-    // Xóa sinh viên theo ID
+    // Xóa theo ID
     public void deleteStudent(String id) {
         Student student = studentManager.getStudentById(id);
         if (student != null) {
@@ -77,7 +77,7 @@ public class StudentController {
             System.out.println("Danh sách sinh viên trống.");
         } else {
             for (Student student : students) {
-                System.out.println(student.getId() + " | " + student.getName() + " | " + student.getEmail() + " | " + student.getGpa());
+                System.out.println(student.getId() + " | " + student.getCode() + " | " + student.getName() + " | " + student.getEmail() + " | " + student.getGpa());
             }
         }
     }
