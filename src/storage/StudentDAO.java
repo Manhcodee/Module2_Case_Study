@@ -19,9 +19,8 @@ public class StudentDAO {
         while ((line = reader.readLine()) != null) {
             String[] data = line.split(",");
 
-            // Bỏ qua dòng tiêu đề hoặc kiểm tra xem dữ liệu có hợp lệ không
             if (data.length != 5) {
-                continue; // Bỏ qua các dòng không hợp lệ
+                continue;
             }
 
             String id = data[0];
@@ -37,7 +36,6 @@ public class StudentDAO {
                 continue; // Bỏ qua sinh viên nếu GPA không hợp lệ
             }
 
-            // Tạo đối tượng Student và thêm vào danh sách
             students.add(new Student(id, code, name, email, gpa));
         }
 
@@ -45,7 +43,7 @@ public class StudentDAO {
         return students;
     }
 
-    // Lưu sinh viên vào file CSV
+    // Lưu vào file CSV
     public static void saveStudentsToCSV(List<Student> students) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH));
         writer.write("ID,Code,Name,Email,GPA\n");

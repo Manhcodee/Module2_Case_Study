@@ -30,7 +30,7 @@ public class StudentApp {
             scanner.nextLine();
 
             switch (choice) {
-                case 1: // Thêm sinh viên
+                case 1: // Thêm
                     System.out.print("Nhập ID: ");
                     String id = scanner.nextLine();
                     System.out.print("Nhập mã sinh viên: ");
@@ -41,7 +41,7 @@ public class StudentApp {
                     while (true) {
                         System.out.print("Nhập email: ");
                         email = scanner.nextLine();
-                        // Kiểm tra email hợp lệ
+                        // Kiểm tra email
                         if (StudentValidator.validateEmail(email)) {
                             break;
                         } else {
@@ -53,7 +53,7 @@ public class StudentApp {
                     controller.addStudent(id, code, name, email, gpa);
                     break;
 
-                case 2: // Sửa sinh viên
+                case 2: // Sửa
                     System.out.print("Nhập ID sinh viên cần sửa: ");
                     String updateId = scanner.nextLine();
                     System.out.print("Nhập tên mới: ");
@@ -65,13 +65,13 @@ public class StudentApp {
                     controller.updateStudent(updateId, newName, newEmail, newGpa);
                     break;
 
-                case 3: // Xóa sinh viên
+                case 3: // Xóa
                     System.out.print("Nhập ID sinh viên cần xóa: ");
                     String deleteId = scanner.nextLine();
                     controller.deleteStudent(deleteId);
                     break;
 
-                case 4: // Hiển thị sinh viên
+                case 4: // Hiển thị
                     controller.displayStudents();
                     break;
 
