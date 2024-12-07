@@ -17,8 +17,12 @@ public class Score {
         return score;
     }
 
+    public void setScore(double score) {
+        this.score = score;
+    }
+
     @Override
     public String toString() {
-        return subject + ":" + score;
+        return subject + ": " + score;
     }
 }
