@@ -1,69 +1,52 @@
 package model;
 
-import java.util.*;
+import java.util.List;
 
 public class Student {
-    private String id;
-    private String code;
+    private String studentId;
     private String name;
-    private String email;
-    private List<Grade> grades;
+    private Gender gender;
+    private Address address;
+    private List<Score> scores;
 
-    public Student(String id, String code, String name, String email) {
-        this.id = id;
-        this.code = code;
+    public Student(String studentId, String name, Gender gender, Address address, List<Score> scores) {
+        this.studentId = studentId;
         this.name = name;
-        this.email = email;
-        this.grades = new ArrayList<>();
+        this.gender = gender;
+        this.address = address;
+        this.scores = scores;
     }
 
-    public void addGrade(Grade grade) {
-        grades.add(grade);
-    }
-
-    public double calculateGPA() {
-        double totalScore = 0;
-        int subjectCount = grades.size();
-
-        for (Grade grade : grades) {
-            totalScore += grade.getScore();
-        }
-
-        return subjectCount > 0 ? totalScore / subjectCount : 0;
-    }
-
-    public void displayStudentInfo() {
-        System.out.println("ID: " + id + ", Mã sinh viên: " + code + ", Tên: " + name + ", Email: " + email);
-        for (Grade grade : grades) {
-            System.out.println(grade);
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getCode() {
-        return code;
+    public String getStudentId() {
+        return studentId;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<Score> getScores() {
+        return scores;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public double calculateAverageScore() {
+        double total = 0;
+        for (Score score : scores) {
+            total += score.getScore();
+        }
+        return scores.isEmpty() ? 0 : total / scores.size();
+    }
+
+    @Override
+    public String toString() {
+        return studentId + "," + name + "," + gender + "," + address + "," + calculateAverageScore();
     }
 }
