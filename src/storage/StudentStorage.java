@@ -8,7 +8,7 @@ import java.util.List;
 
 public class StudentStorage {
     private static StudentStorage instance;
-    private static final String FILE_PATH = "students.csv";
+    private static final String FILE_PATH = "data/students.csv";
     private List<Student> students;
 
     private StudentStorage() {
@@ -30,10 +30,12 @@ public class StudentStorage {
     public void saveStudents() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Student student : students) {
-                writer.write(student.toString());
-                writer.newLine();
+                writer.write(student.toCSV());
+                writer.newLine(); // Xuống dòng sau mỗi sinh viên
             }
+            System.out.println("Lưu danh sách sinh viên thành công!");
         } catch (IOException e) {
+            System.out.println("Đã xảy ra lỗi khi lưu danh sách sinh viên.");
             e.printStackTrace();
         }
     }
@@ -47,23 +49,31 @@ public class StudentStorage {
                 String[] parts = line.split(",\\s*");
                 if (parts.length < 6) continue;
 
+                // Đọc thông tin cơ bản
                 String studentId = parts[0];
                 String name = parts[1];
                 String email = parts[2];
                 Gender gender = Gender.valueOf(parts[3]);
                 Address address = new Address(parts[4], parts[5], parts[6]);
 
+                // Đọc điểm các môn học
                 List<Score> scores = new ArrayList<>();
-                for (int i = 7; i < parts.length - 2; i += 2) {
+                int scoreStartIndex = 7;
+                for (int i = scoreStartIndex; i < parts.length - 2; i += 2) {
                     try {
-                        Subject subject = Subject.fromString(parts[i]); // Sử dụng Subject.fromString()
-                        double score = Double.parseDouble(parts[i + 1]);
+                        Subject subject = Subject.fromString(parts[i].trim());
+                        double score = Double.parseDouble(parts[i + 1].trim());
                         scores.add(new Score(subject, score));
                     } catch (IllegalArgumentException e) {
                         System.out.println("Bỏ qua môn học không hợp lệ: " + parts[i]);
                     }
                 }
 
+                // Đọc điểm trung bình và xếp loại (nếu cần)
+                double averageScore = Double.parseDouble(parts[parts.length - 2]);
+                String rank = parts[parts.length - 1];
+
+                // Tạo đối tượng Student
                 Student student = new Student(studentId, name, email, gender, address, scores);
                 students.add(student);
             }

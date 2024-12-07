@@ -78,4 +78,24 @@ public class Student {
         return String.format("%s, %s, %s, %s, %s, %s, %.2f, %s",
                 studentId, name, email, gender, address, scoresStr.toString(), calculateAverageScore(), getRank());
     }
+
+    public String toCSV() {
+        StringBuilder csvBuilder = new StringBuilder();
+        csvBuilder.append(studentId).append(", ");
+        csvBuilder.append(name).append(", ");
+        csvBuilder.append(email).append(", ");
+        csvBuilder.append(gender).append(", ");
+        csvBuilder.append(address.toString()).append(", ");
+
+        // Thêm điểm từng môn học
+        for (Score score : scores) {
+            csvBuilder.append(score.getSubject()).append(", ").append(score.getScore()).append(", ");
+        }
+
+        // Thêm điểm trung bình và xếp loại
+        csvBuilder.append(calculateAverageScore()).append(", ");
+        csvBuilder.append(getRank());
+
+        return csvBuilder.toString();
+    }
 }

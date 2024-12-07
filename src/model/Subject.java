@@ -20,7 +20,7 @@ public enum Subject {
     }
 
     /**
-     * Tìm Subject từ chuỗi (không phân biệt hoa/thường)
+     * Chuyển chuỗi thành enum Subject (hỗ trợ viết thường/hoa và tên hiển thị)
      */
     public static Subject fromString(String value) {
         for (Subject subject : values()) {

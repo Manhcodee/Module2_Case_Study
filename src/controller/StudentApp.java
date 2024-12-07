@@ -224,14 +224,14 @@ public class StudentApp {
     }
 
     private static void displayStudents() {
-        System.out.printf("%-10s %-20s %-20s %-10s %-30s %-80s %-10s %-10s\n",
+        System.out.printf("%-10s %-20s %-20s %-10s %-30s %-70s %-10s %-20s\n",
                 "ID", "Name", "Email", "Gender", "Address", "Scores", "Avg Score", "Rank");
 
         for (Student student : storage.getStudents()) {
             // Tạo chuỗi chứa danh sách điểm các môn học
             StringBuilder scoresStr = new StringBuilder();
             for (Score score : student.getScores()) {
-                scoresStr.append(score.getSubject()).append(": ").append(score.getScore()).append(", ");
+                scoresStr.append(score.getSubject()).append(", ").append(score.getScore()).append(", ");
             }
 
             // Loại bỏ dấu phẩy cuối cùng trong chuỗi điểm
@@ -240,7 +240,7 @@ public class StudentApp {
             }
 
             // In thông tin sinh viên
-            System.out.printf("%-10s %-20s %-20s %-10s %-30s %-50s %-10.2f %-10s\n",
+            System.out.printf("%-10s %-20s %-20s %-10s %-30s %-70s %-10.2f %-10s\n",
                     student.getStudentId(),
                     student.getName(),
                     student.getEmail(),
