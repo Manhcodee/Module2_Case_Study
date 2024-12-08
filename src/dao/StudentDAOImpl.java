@@ -36,7 +36,14 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public void deleteStudent(String studentId) {
         List<Student> students = storage.getStudents();
-        students.removeIf(student -> student.getStudentId().equals(studentId));
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getStudentId().equals(studentId)) {
+                students.remove(i); // Xóa sinh viên tại vị trí `i`
+                System.out.println("Xóa sinh viên thành công!");
+                return; // Thoát ngay khi xóa thành công
+            }
+        }
+        System.out.println("Không tìm thấy sinh viên với mã ID: " + studentId);
     }
 
     @Override
