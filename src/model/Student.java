@@ -4,21 +4,44 @@ import java.util.List;
 
 public class Student {
     private String studentId;
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
+
     private String name;
     private String email;
-    private Gender gender;
+    private String gender;
     private Address address;
     private List<Score> scores;
-    private RankStrategy rankStrategy;
 
-    public Student(String studentId, String name, String email, Gender gender, Address address, List<Score> scores) {
+    public Student(String studentId, String name, String email, String gender, Address address, List<Score> scores) {
         this.studentId = studentId;
         this.name = name;
         this.email = email;
         this.gender = gender;
         this.address = address;
         this.scores = scores;
-        this.rankStrategy = new DefaultRankStrategy();
     }
 
     public String getStudentId() {
@@ -29,19 +52,11 @@ public class Student {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
@@ -49,31 +64,28 @@ public class Student {
         return address;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     public List<Score> getScores() {
         return scores;
     }
 
     public double calculateAverageScore() {
-        double total = 0;
-        for (Score score : scores) {
-            total += score.getScore();
-        }
-        return scores.isEmpty() ? 0 : total / scores.size();
+        return scores.stream().mapToDouble(Score::getScore).average().orElse(0.0);
     }
 
     public String getRank() {
-        return rankStrategy.getRank(calculateAverageScore());
+        double avg = calculateAverageScore();
+        if (avg >= 9.0) return "Xuất sắc";
+        if (avg >= 8.0) return "Giỏi";
+        if (avg >= 6.5) return "Khá";
+        if (avg >= 5.0) return "Trung bình";
+        return "Yếu";
     }
 
     @Override
     public String toString() {
         StringBuilder scoresStr = new StringBuilder();
         for (Score score : scores) {
-            scoresStr.append(score.toString()).append("; ");
+            scoresStr.append(score.toString()).append(", ");
         }
         return String.format("%s, %s, %s, %s, %s, %s, %.2f, %s",
                 studentId, name, email, gender, address, scoresStr.toString(), calculateAverageScore(), getRank());
@@ -87,12 +99,10 @@ public class Student {
         csvBuilder.append(gender).append(", ");
         csvBuilder.append(address.toString()).append(", ");
 
-        // Thêm điểm từng môn học
         for (Score score : scores) {
             csvBuilder.append(score.getSubject()).append(", ").append(score.getScore()).append(", ");
         }
 
-        // Thêm điểm trung bình và xếp loại
         csvBuilder.append(calculateAverageScore()).append(", ");
         csvBuilder.append(getRank());
 

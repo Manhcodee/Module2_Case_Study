@@ -1,20 +1,27 @@
 package controller;
 
+import dao.StudentDAO;
+import dao.StudentDAOImpl;
 import model.*;
 import storage.StudentStorage;
+import util.Validator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class StudentApp {
-    private static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-    private static StudentStorage storage = StudentStorage.getInstance();
-    private static Scanner scanner = new Scanner(System.in);
+
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final StudentDAO studentDAO = new StudentDAOImpl();
 
     public static void main(String[] args) {
-        // đọc file
-        storage.loadStudents();
+        System.out.println("Danh sách sinh viên");
+        List<Student> students = studentDAO.getAllStudents();
+        if (students.isEmpty()) {
+            System.out.println("Danh sách sinh viên trống.");
+        } else {
+            displayStudents();
+        }
 
         while (true) {
             System.out.println("1. Thêm sinh viên");
@@ -49,48 +56,71 @@ public class StudentApp {
         }
     }
 
+    private static void displayStudents() {
+        List<Student> students = studentDAO.getAllStudents();
+        System.out.printf("%-10s %-20s %-20s %-10s %-30s %-80s %-10s %-10s\n",
+                "ID", "Name", "Email", "Gender", "Address", "Scores", "Avg Score", "Rank");
+
+        for (Student student : students) {
+            StringBuilder scoresStr = new StringBuilder();
+            for (Score score : student.getScores()) {
+                scoresStr.append(score.getSubject()).append(": ").append(score.getScore()).append(", ");
+            }
+            if (scoresStr.length() > 0) {
+                scoresStr.setLength(scoresStr.length() - 2);
+            }
+            System.out.printf("%-10s %-20s %-20s %-10s %-30s %-80s %-10.2f %-10s\n",
+                    student.getStudentId(),
+                    student.getName(),
+                    student.getEmail(),
+                    student.getGender(),
+                    student.getAddress(),
+                    scoresStr.toString(),
+                    student.calculateAverageScore(),
+                    student.getRank());
+        }
+    }
+
     private static void addStudent() {
         String studentId;
         while (true) {
             System.out.print("Nhập mã sinh viên: ");
             studentId = scanner.nextLine();
 
-            boolean idExists = false;
-            for (Student student : storage.getStudents()) {
-                if (student.getStudentId().equals(studentId)) {
-                    idExists = true;
-                    break;
-                }
+            if (!Validator.isValidStudentId(studentId)) {
+                System.out.println("ID sinh viên không hợp lệ! Chỉ được chứa chữ cái và số.");
+                continue;
             }
 
-            if (idExists) {
+            if (studentDAO.getStudentById(studentId) != null) {
                 System.out.println("ID này đã tồn tại, vui lòng nhập ID khác.");
-            } else {
-                break;
+                continue;
             }
+
+            break;
         }
 
         System.out.print("Nhập tên sinh viên: ");
         String name = scanner.nextLine();
 
-        System.out.print("Nhập email: ");
         String email;
         while (true) {
+            System.out.print("Nhập email: ");
             email = scanner.nextLine();
-            if (email.matches(EMAIL_REGEX)) {
-                break;
-            } else {
+            if (!Validator.isValidEmail(email)) {
                 System.out.println("Email không hợp lệ, vui lòng nhập lại!");
+            } else {
+                break;
             }
         }
 
         System.out.print("Nhập giới tính (MALE/FEMALE/OTHER): ");
-        Gender gender;
+        String gender;
         while (true) {
-            try {
-                gender = Gender.valueOf(scanner.nextLine().toUpperCase());
+            gender = scanner.nextLine().toUpperCase();
+            if (gender.equals("MALE") || gender.equals("FEMALE") || gender.equals("OTHER")) {
                 break;
-            } catch (IllegalArgumentException e) {
+            } else {
                 System.out.println("Giới tính không hợp lệ, vui lòng nhập lại (MALE/FEMALE/OTHER)!");
             }
         }
@@ -108,14 +138,14 @@ public class StudentApp {
             }
         }
 
-        List<Score> scores = new ArrayList<>();
-        for (Subject subject : Subject.values()) {
-            System.out.print("Nhập điểm môn " + subject.getDisplayName() + ": ");
-            double score;
+        List<Score> scores = StudentFactory.createDefaultScores();
+        for (Score score : scores) {
+            System.out.print("Nhập điểm môn " + score.getSubject() + ": ");
+            double scoreValue;
             while (true) {
                 try {
-                    score = Double.parseDouble(scanner.nextLine());
-                    if (score >= 0 && score <= 10) {
+                    scoreValue = Double.parseDouble(scanner.nextLine());
+                    if (scoreValue >= 0 && scoreValue <= 10) {
                         break;
                     } else {
                         System.out.println("Điểm phải nằm trong khoảng 0-10, vui lòng nhập lại!");
@@ -124,39 +154,30 @@ public class StudentApp {
                     System.out.println("Giá trị không hợp lệ. Vui lòng nhập lại!");
                 }
             }
-            scores.add(new Score(subject, score));
+            score.setScore(scoreValue);
         }
 
-        Student student = new Student(studentId, name, email, gender, address, scores);
-        storage.getStudents().add(student);
+        Student student = StudentFactory.createStudent(studentId, name, email, gender, address, scores);
+        studentDAO.addStudent(student);
 
         System.out.println("Thêm sinh viên thành công!");
     }
-
 
     private static void updateStudent() {
         System.out.print("Nhập mã sinh viên cần sửa: ");
         String studentId = scanner.nextLine();
 
-        List<Student> students = storage.getStudents();
-        Student student = null;
-
-        // Duyệt qua danh sách để tìm sinh viên
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getStudentId().equals(studentId)) {
-                student = students.get(i);
-                break;
-            }
-        }
-
+        // Tìm sinh viên theo ID
+        Student student = studentDAO.getStudentById(studentId);
         if (student == null) {
             System.out.println("Không tìm thấy sinh viên với mã ID này.");
             return;
         }
 
-        System.out.println("1. Sửa thông tin cơ bản (Tên, Địa chỉ, Email)");
+        System.out.println("Chọn thông tin cần sửa:");
+        System.out.println("1. Sửa thông tin cơ bản (Tên, Email, Giới tính, Địa chỉ)");
         System.out.println("2. Sửa điểm các môn học");
-        System.out.print("Chọn chức năng: ");
+        System.out.print("Lựa chọn: ");
         int choice = Integer.parseInt(scanner.nextLine());
 
         switch (choice) {
@@ -167,93 +188,96 @@ public class StudentApp {
                 updateScores(student);
                 break;
             default:
-                System.out.println("Chức năng không hợp lệ!");
+                System.out.println("Lựa chọn không hợp lệ!");
         }
+
+        // Cập nhật sinh viên trong DAO
+        studentDAO.updateStudent(studentId, student);
+        System.out.println("Sửa thông tin sinh viên thành công!");
     }
 
+    // Sửa thông tin cơ bản
     private static void updateBasicInfo(Student student) {
-        System.out.print("Nhập tên mới: ");
-        student.setName(scanner.nextLine());
+        System.out.print("Nhập tên mới (hiện tại: " + student.getName() + "): ");
+        String name = scanner.nextLine();
+        if (!name.isEmpty()) {
+            student.setName(name);
+        }
 
-        System.out.print("Nhập email mới: ");
         String email;
         while (true) {
+            System.out.print("Nhập email mới (hiện tại: " + student.getEmail() + "): ");
             email = scanner.nextLine();
-            if (email.matches(EMAIL_REGEX)) {
+            if (email.isEmpty()) {
+                break; // Không thay đổi email
+            }
+            if (Validator.isValidEmail(email)) {
+                student.setEmail(email);
                 break;
             } else {
                 System.out.println("Email không hợp lệ, vui lòng nhập lại!");
             }
         }
-        student.setEmail(email);
 
-        System.out.print("Nhập địa chỉ mới (City, District, Street): ");
-        String[] addressParts = scanner.nextLine().split(",");
-        student.setAddress(new Address(addressParts[0], addressParts[1], addressParts[2]));
+        System.out.print("Nhập giới tính mới (hiện tại: " + student.getGender() + "): ");
+        String gender = scanner.nextLine();
+        if (!gender.isEmpty()) {
+            if (gender.equalsIgnoreCase("MALE") || gender.equalsIgnoreCase("FEMALE") || gender.equalsIgnoreCase("OTHER")) {
+                student.setGender(gender);
+            } else {
+                System.out.println("Giới tính không hợp lệ! Sử dụng giá trị hiện tại.");
+            }
+        }
 
-        System.out.println("Sửa thông tin cơ bản thành công!");
+        System.out.print("Nhập địa chỉ mới (City, District, Street - hiện tại: " + student.getAddress() + "): ");
+        String addressInput = scanner.nextLine();
+        if (!addressInput.isEmpty()) {
+            String[] addressParts = addressInput.split(",\\s*");
+            if (addressParts.length == 3) {
+                student.setAddress(new Address(addressParts[0], addressParts[1], addressParts[2]));
+            } else {
+                System.out.println("Địa chỉ không hợp lệ! Sử dụng giá trị hiện tại.");
+            }
+        }
     }
 
+    // Sửa điểm các môn học
     private static void updateScores(Student student) {
-        for (Score score : student.getScores()) {
-            System.out.print("Nhập điểm môn " + score.getSubject() + " (Điểm hiện tại: " + score.getScore() + "): ");
-            double newScore = Double.parseDouble(scanner.nextLine());
-            score.setScore(newScore);
+        List<Score> scores = student.getScores();
+        for (Score score : scores) {
+            System.out.print("Nhập điểm mới cho môn " + score.getSubject() + " (hiện tại: " + score.getScore() + "): ");
+            String input = scanner.nextLine();
+            if (!input.isEmpty()) {
+                try {
+                    double newScore = Double.parseDouble(input);
+                    if (newScore >= 0 && newScore <= 10) {
+                        score.setScore(newScore);
+                    } else {
+                        System.out.println("Điểm phải nằm trong khoảng 0-10! Giữ nguyên điểm hiện tại.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Giá trị không hợp lệ! Giữ nguyên điểm hiện tại.");
+                }
+            }
         }
-        System.out.println("Cập nhật điểm thành công!");
     }
 
     private static void deleteStudent() {
         System.out.print("Nhập mã sinh viên cần xóa: ");
         String studentId = scanner.nextLine();
 
-        List<Student> students = storage.getStudents();
-        boolean found = false;
-
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getStudentId().equals(studentId)) {
-                students.remove(i);
-                found = true;
-                System.out.println("Xóa sinh viên thành công!");
-                break;
-            }
-        }
-        if (!found) {
+        Student student = studentDAO.getStudentById(studentId);
+        if (student == null) {
             System.out.println("Không tìm thấy sinh viên với mã ID này.");
+            return;
         }
-    }
 
-    private static void displayStudents() {
-        System.out.printf("%-10s %-20s %-20s %-10s %-30s %-70s %-10s %-20s\n",
-                "ID", "Name", "Email", "Gender", "Address", "Scores", "Avg Score", "Rank");
-
-        for (Student student : storage.getStudents()) {
-            // Tạo chuỗi chứa danh sách điểm các môn học
-            StringBuilder scoresStr = new StringBuilder();
-            for (Score score : student.getScores()) {
-                scoresStr.append(score.getSubject()).append(", ").append(score.getScore()).append(", ");
-            }
-
-            // Loại bỏ dấu phẩy cuối cùng trong chuỗi điểm
-            if (scoresStr.length() > 0) {
-                scoresStr.setLength(scoresStr.length() - 2);
-            }
-
-            // In thông tin sinh viên
-            System.out.printf("%-10s %-20s %-20s %-10s %-30s %-70s %-10.2f %-10s\n",
-                    student.getStudentId(),
-                    student.getName(),
-                    student.getEmail(),
-                    student.getGender(),
-                    student.getAddress(),
-                    scoresStr.toString(),
-                    student.calculateAverageScore(),
-                    student.getRank());
-        }
+        studentDAO.deleteStudent(studentId);
+        System.out.println("Xóa sinh viên thành công!");
     }
 
     private static void saveStudents() {
-        storage.saveStudents();
+        studentDAO.saveStudents();
         System.out.println("Lưu danh sách sinh viên thành công!");
     }
 }

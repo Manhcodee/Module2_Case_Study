@@ -1,15 +1,15 @@
 package model;
 
 public class Score {
-    private Subject subject;
+    private String subject;
     private double score;
 
-    public Score(Subject subject, double score) {
+    public Score(String subject, double score) {
         this.subject = subject;
         this.score = score;
     }
 
-    public Subject getSubject() {
+    public String getSubject() {
         return subject;
     }
 

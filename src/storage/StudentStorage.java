@@ -1,6 +1,8 @@
 package storage;
 
-import model.*;
+import model.Address;
+import model.Score;
+import model.Student;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,59 +28,45 @@ public class StudentStorage {
         return students;
     }
 
-    // Ghi dữ liệu vào file CSV
+    // Lưu danh sách sinh viên ra file CSV
     public void saveStudents() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Student student : students) {
                 writer.write(student.toCSV());
-                writer.newLine(); // Xuống dòng sau mỗi sinh viên
+                writer.newLine();
             }
-            System.out.println("Lưu danh sách sinh viên thành công!");
         } catch (IOException e) {
-            System.out.println("Đã xảy ra lỗi khi lưu danh sách sinh viên.");
             e.printStackTrace();
         }
     }
 
-    // Đọc dữ liệu từ file CSV
+    // Đọc dữ liệu từ file CSV và tải danh sách sinh viên
     public void loadStudents() {
-        students.clear(); // Xóa danh sách hiện tại để tải lại từ file
+        students.clear(); // Xóa danh sách hiện tại trước khi tải dữ liệu từ file
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",\\s*");
-                if (parts.length < 6) continue;
+                if (parts.length < 6) continue; // Đảm bảo đủ thông tin cơ bản
 
-                // Đọc thông tin cơ bản
                 String studentId = parts[0];
                 String name = parts[1];
                 String email = parts[2];
-                Gender gender = Gender.valueOf(parts[3]);
+                String gender = parts[3];
                 Address address = new Address(parts[4], parts[5], parts[6]);
 
-                // Đọc điểm các môn học
                 List<Score> scores = new ArrayList<>();
-                int scoreStartIndex = 7;
-                for (int i = scoreStartIndex; i < parts.length - 2; i += 2) {
-                    try {
-                        Subject subject = Subject.fromString(parts[i].trim());
-                        double score = Double.parseDouble(parts[i + 1].trim());
-                        scores.add(new Score(subject, score));
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Bỏ qua môn học không hợp lệ: " + parts[i]);
-                    }
+                for (int i = 7; i < parts.length - 2; i += 2) {
+                    String subject = parts[i];
+                    double score = Double.parseDouble(parts[i + 1]);
+                    scores.add(new Score(subject, score));
                 }
 
-                // Đọc điểm trung bình và xếp loại (nếu cần)
-                double averageScore = Double.parseDouble(parts[parts.length - 2]);
-                String rank = parts[parts.length - 1];
-
-                // Tạo đối tượng Student
                 Student student = new Student(studentId, name, email, gender, address, scores);
                 students.add(student);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Không tìm thấy file dữ liệu, bắt đầu với danh sách trống.");
+            System.out.println("Không tìm thấy file dữ liệu. Bắt đầu với danh sách trống.");
         } catch (IOException e) {
             e.printStackTrace();
         }
