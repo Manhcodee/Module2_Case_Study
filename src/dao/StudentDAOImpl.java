@@ -38,7 +38,7 @@ public class StudentDAOImpl implements StudentDAO {
         List<Student> students = storage.getStudents();
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).getStudentId().equals(studentId)) {
-                students.remove(i); // Xóa sinh viên tại vị trí `i`
+                students.remove(i);
                 System.out.println("Xóa sinh viên thành công!");
                 return;
             }

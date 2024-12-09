@@ -213,7 +213,7 @@ public class StudentApp {
             System.out.print("Nhập email mới (hiện tại: " + student.getEmail() + "): ");
             email = scanner.nextLine();
             if (email.isEmpty()) {
-                break; // Không thay đổi email
+                break;
             }
             if (Validator.isValidEmail(email)) {
                 student.setEmail(email);
