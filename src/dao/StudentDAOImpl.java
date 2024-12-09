@@ -40,7 +40,7 @@ public class StudentDAOImpl implements StudentDAO {
             if (students.get(i).getStudentId().equals(studentId)) {
                 students.remove(i); // Xóa sinh viên tại vị trí `i`
                 System.out.println("Xóa sinh viên thành công!");
-                return; // Thoát ngay khi xóa thành công
+                return;
             }
         }
         System.out.println("Không tìm thấy sinh viên với mã ID: " + studentId);
