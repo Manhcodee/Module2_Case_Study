@@ -9,7 +9,7 @@ public class StudentDAOImpl implements StudentDAO {
     private final StudentStorage storage = StudentStorage.getInstance();
 
     public StudentDAOImpl() {
-        storage.loadStudents(); // Tải dữ liệu từ file CSV khi khởi tạo DAO
+        storage.loadStudents();
     }
 
     @Override

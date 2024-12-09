@@ -56,6 +56,7 @@ public class StudentApp {
         }
     }
 
+    //hiển thị danh sách
     private static void displayStudents() {
         List<Student> students = studentDAO.getAllStudents();
         System.out.printf("%-10s %-20s %-20s %-10s %-30s %-80s %-10s %-10s\n",
@@ -81,6 +82,7 @@ public class StudentApp {
         }
     }
 
+    //thêm student
     private static void addStudent() {
         String studentId;
         while (true) {
@@ -103,6 +105,7 @@ public class StudentApp {
         System.out.print("Nhập tên sinh viên: ");
         String name = scanner.nextLine();
 
+        //nhập email
         String email;
         while (true) {
             System.out.print("Nhập email: ");
@@ -114,6 +117,7 @@ public class StudentApp {
             }
         }
 
+        //nhập giới tính
         System.out.print("Nhập giới tính (MALE/FEMALE/OTHER): ");
         String gender;
         while (true) {

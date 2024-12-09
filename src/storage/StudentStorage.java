@@ -40,14 +40,14 @@ public class StudentStorage {
         }
     }
 
-    // Đọc dữ liệu từ file CSV và tải danh sách sinh viên
+    // Đọc dữ liệu từ file CSV và tải danh sách
     public void loadStudents() {
-        students.clear(); // Xóa danh sách hiện tại trước khi tải dữ liệu từ file
+        students.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",\\s*");
-                if (parts.length < 6) continue; // Đảm bảo đủ thông tin cơ bản
+                if (parts.length < 6) continue;
 
                 String studentId = parts[0];
                 String name = parts[1];
